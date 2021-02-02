@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+	
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+        <title>FileWriter API</title>
+        
+        <style>
+          body { font-family: Verdana; font-size: 1.5em; } 
+          .horizon { width: 500px; margin: 0 auto; padding: 10px; border: 2px solid green; }
+          .horizon input, .horizon label { margin: 10px; }
+          .horizon input { width: 400px; height: 2em; }
+		  
+		  
+		  table, td, th {
+			  border: 1px solid black;
+			}
+		  
+		  table {
+			  border-collapse: collapse;
+			  width: 100%;
+			}
+
+			th, td {
+			  text-align: left;
+			  padding: 8px;
+			}
+
+			tr:nth-child(even) {background-color: #f2f2f2;}
+			
+			
+			.button {
+			  background-color: #4CAF50; /* Green */
+			  border: none;
+			  color: white;
+			  padding: 15px 32px;
+			  text-align: center;
+			  text-decoration: none;
+			  display: inline-block;
+			  font-size: 16px;
+			  margin: 4px 2px;
+			  cursor: pointer;
+			  -webkit-transition-duration: 0.4s; /* Safari */
+			  transition-duration: 0.4s;
+			}
+			.button2:hover {
+			  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+			}
+        </style>
+
+        
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript">
+          'use strict';
+			var selectedFile;
+          $(document).ready(function(){
+             $('#inputfile').change(function(data){
+                 selectedFile = $('#inputfile').get(0).files[0];
+				 //alert(selectedFile.name);
+                 var reader = new FileReader();
+                 reader.onloadend= function(e) {
+                     var data = e.target.result;
+                     var base64 = data.split('base64,')[1];
+                     var csv = atob(base64);
+					 htmlTable(csv);
+                     //alert('var csv = ' + csv);
+                 }; 
+				 document.getElementById("reloadTable").style='block';
+				 document.getElementById("reloadTable1").style='block';
+                 reader.readAsDataURL(selectedFile);
+             });
+          });
+		  
+		  function myFunction()
+		  {
+				//alert("hi");
+		  
+                 var reader = new FileReader();
+                 reader.onloadend= function(e) {
+                     var data = e.target.result;
+                     var base64 = data.split('base64,')[1];
+                     var csv = atob(base64);
+					 htmlTable(csv);
+                     //alert('var csv = ' + csv);
+                 }; 
+                 reader.readAsDataURL(selectedFile);
+		  
+		  }
+		  
+		  function htmlTable(csv)
+			{
+				    var student_data = csv.split(/\r?\n|\r/);
+					var tab_data = '<table class="table table-bordered table-striped">';
+					//alert(student_data.length);
+					
+					//Tab header
+					tab_data +='<tr><th>Date and Time</th><th>Matriculation Number</th><th>Name</th><th>Temperature</th><th>Oxygen Level</th></tr>';
+					
+					for(var count = student_data.length-1; count>0; count--)// Removed white space by (student_data.length-1)
+					{
+					 //alert(student_data[count].replace(/['"]+/g, ''));
+					 var cell_data = student_data[count].replace(/['"]+/g, '').split(",");
+					 tab_data += '<tr>';
+					 for(var cell_count=0; cell_count<cell_data.length; cell_count++)
+					 //for(var cell_count=cell_data.length; cell_count>=0; cell_count--)
+					 {
+					  if(count === 0)
+					  {
+					   tab_data += '<th>'+cell_data[cell_count]+'</th>';
+					  }
+					  else
+					  {
+					   tab_data += '<td>'+cell_data[cell_count]+'</td>';
+					  }
+					 }
+					 tab_data += '</tr>';
+					}
+					tab_data += '</table>';
+					$('#student_table').html(tab_data);
+			}
+		  
+        </script>
+    </head>
+    <body>
+		
+		<nav class="navbar navbar-inverse">
+		  <div class="container-fluid">
+			<div class="navbar-header">
+			  <a class="navbar-brand" href="#"><I>Solution Design in Medical Engineering</I></a>
+			</div>
+			
+			<ul class="nav navbar-nav navbar-right">
+			  <li><a href="Login.html"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+			</ul>
+		  </div>
+		</nav>
+	
+        <h1 style="margin-left:20px;" align="center" >University Student's Database</h1>
+		
+        <div id="mainDiv" class="horizon" align="center">
+			<label for="myfile">Select a Database:</label>
+			<input type="file" class="" id="inputfile"/>
+        </div>
+		
+		<div id="reloadTable"  align="center" style="display:none">
+			<button onclick="myFunction() "	class="button button2">Reload Table</button>
+		</div>
+		
+		<div id="student_table"></div>
+		
+		<div id="reloadTable1"  align="center" style="display:none">
+			<button onclick="myFunction() "	class="button button2">Reload Table</button>
+		</div>
+    </body>
+</html>
